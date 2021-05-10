@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewexport" contents="width=device-width, initial-scale=1.0">
+    <title>Receipes list</title>
+   <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <section>
+        <div class="container initial">
+            <h1 class="brand">Receipe App</h1>
+            <form>
+                <input type="text" placeholder="Search your receipe...">
+                <ion-icon name="search-circle-outline"></ion-icon>
+            </form>
+          <div>
+            <form>
+                  <input type="hidden" name="id" id="id" /><br />
+                  <h1>List:</h1><br />
+                  <textarea name="list" id="list"></textarea><br/>
+                  <h1>Receipe Name:</h1><br />
+                  <input type="text" name="name" id="name"><br/>
+                  <td>
+                <button class="view-button" type="button" onclick="showReceipes()">Submit</button>
+            </td>
+        
+            </form>
+            </div>
+            <div class="search-result">
+        </div>   
+    </div>
+
+ </section>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
+    <script type="text/javascript">
+  window.onload = function(){
+    const searchForm=document.querySelector('form');
+    let searchQuery= '';
+    searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            searchQuery=e.target.querySelector('input').value;
+           fetchAPI();
+          
+    })
+   
+
+const searchResultDiv=document.querySelector('.search-result')
+const container=document.querySelector('.container')
+
+function generateHTML(results) {
+  container.classList.remove("initial");
+  let generatedHTML = "";
+  results.map((result) => {
+    generatedHTML += `
+      <div class="item">
+        <img src="${result.recipe.image}" alt="img">
+        <div class="flex-container">
+          <h1 class="title">${result.recipe.label}</h1>
+          <a class="view-button" target="_blank" href="${
+            result.recipe.url
+          }">View Recipe</a>
+        </div>
+        <p class="item-data">Calories: ${result.recipe.calories.toFixed(2)}</p>
+        <p class="item-data">Diet label: ${
+          result.recipe.dietLabels.length > 0
+            ? result.recipe.dietLabels
+            : "No Data Found"
+        }</p>
+        <p class="item-data">Health labels: ${result.recipe.healthLabels}</p>
+      </div>
+    `;
+  })
+  searchResultDiv.innerHTML = generatedHTML;
+}
+
+async function fetchAPI() {
+
+  const APP_ID = "90c746a5";
+  const APP_key = "6096869e14d389cdc9442a3696e5109a";
+  const baseURL = `https://api.edamam.com/search?q=${searchQuery}&app_id=${APP_ID}&app_key=${APP_key}&from=0&to=20`;
+  const response = await fetch(baseURL);
+  const data = await response.json();
+  generateHTML(data.hits);
+  console.log(data);
+}
+
+
+}
+
+  
+async function showReceipes(){
+
+  var x = document.getElementById("name").value;
+  document.getElementById("list").innerHTML += x+"\n";
+     
+}
+
+
+
+</script>
+</body>
+</html>
